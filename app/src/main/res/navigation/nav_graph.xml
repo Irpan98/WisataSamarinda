@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/splashFragment">
+
+    <fragment
+        android:id="@+id/profilFragment"
+        android:name="id.itborneo.wisatasamarinda.ui.profil.ProfilFragment"
+        android:label="fragment_profil"
+        tools:layout="@layout/fragment_profil" />
+    <fragment
+        android:id="@+id/wisataPlaceFragment"
+        android:name="id.itborneo.wisatasamarinda.ui.wisata.WisataPlaceFragment"
+        android:label="fragment_wisata_place"
+        tools:layout="@layout/fragment_wisata_place" >
+        <action
+            android:id="@+id/action_wisataPlaceFragment_to_addUpdateFragment"
+            app:destination="@id/addUpdateFragment" />
+        <action
+            android:id="@+id/action_wisataPlaceFragment_to_detailFragment"
+            app:destination="@id/detailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addUpdateFragment"
+        android:name="id.itborneo.wisatasamarinda.ui.addUpdate.AddUpdateFragment"
+        android:label="fragment_add_update"
+        tools:layout="@layout/fragment_add_update" >
+        <action
+            android:id="@+id/action_addUpdateFragment_to_mapMarkerFragment"
+            app:destination="@id/mapMarkerFragment" />
+        <action
+            android:id="@+id/action_addUpdateFragment_to_wisataPlaceFragment"
+            app:destination="@id/wisataPlaceFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/detailFragment"
+        android:name="id.itborneo.wisatasamarinda.ui.detail.DetailFragment"
+        android:label="fragment_detail"
+        tools:layout="@layout/fragment_detail" >
+        <action
+            android:id="@+id/action_detailFragment_to_addUpdateFragment"
+            app:destination="@id/addUpdateFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/mapMarkerFragment"
+        android:name="id.itborneo.wisatasamarinda.ui.mapMarker.MapMarkerFragment"
+        android:label="fragment_map_marker"
+        tools:layout="@layout/fragment_map_marker" />
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="id.itborneo.wisatasamarinda.ui.splash.SplashFragment"
+        android:label="fragment_splash"
+        tools:layout="@layout/fragment_splash" >
+        <action
+            android:id="@+id/action_splashFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="id.itborneo.wisatasamarinda.ui.login.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_loginFragment_to_wisataPlaceFragment"
+            app:destination="@id/wisataPlaceFragment" />
+    </fragment>
+</navigation>

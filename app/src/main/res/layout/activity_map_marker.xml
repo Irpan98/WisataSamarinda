@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.mapMarker.MapMarkerActivity">
+
+
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <TextView
+        android:id="@+id/tvLocation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="14dp"
+        android:padding="4dp"
+        android:background="@android:color/white"
+        android:text="@string/move_the_camera"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/map"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Samarinda" />
+
+    <!--    <Button-->
+    <!--        android:id="@+id/btnGetLocation"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:text="Location"-->
+    <!--        app:layout_constraintBottom_toBottomOf="@+id/map"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        app:layout_constraintStart_toStartOf="parent" />-->
+
+<!--    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton-->
+<!--        android:id="@+id/btnGetLocation"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_alignParentEnd="true"-->
+<!--        android:layout_alignParentBottom="true"-->
+<!--        android:layout_margin="14dp"-->
+<!--        android:backgroundTint="@android:color/white"-->
+<!--        android:gravity="center_horizontal"-->
+<!--        android:text="@string/get_location"-->
+<!--        android:textColor="@color/colorPrimary"-->
+<!--        app:icon="@drawable/ic_maps"-->
+<!--        app:iconTint="@color/colorPrimary"-->
+<!--        app:layout_constraintBottom_toBottomOf="@+id/map"-->
+<!--        app:layout_constraintEnd_toEndOf="parent" />-->
+
+    <Button
+        android:id="@+id/btnShowAddress"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Show Address"
+        app:layout_constraintBottom_toTopOf="@+id/btnGetLocation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btnGetLocation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="14dp"
+        android:backgroundTint="@android:color/white"
+        android:gravity="center_horizontal"
+        android:text="Location"
+        app:layout_constraintBottom_toBottomOf="@+id/map"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
