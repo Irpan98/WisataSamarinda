@@ -12,11 +12,11 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <com.otaliastudios.zoom.ZoomImageView
+
+        <ImageView
             android:id="@+id/ivPlace"
             android:layout_width="match_parent"
             android:layout_height="200dp" />
-
         <TextView
             android:id="@+id/tvName"
             android:layout_width="match_parent"

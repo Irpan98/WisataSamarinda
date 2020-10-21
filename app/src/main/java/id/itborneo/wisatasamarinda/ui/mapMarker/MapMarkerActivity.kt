@@ -1,10 +1,14 @@
 package id.itborneo.wisatasamarinda.ui.mapMarker
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
@@ -44,6 +48,11 @@ class MapMarkerActivity : AppCompatActivity(), OnMapReadyCallback {
         initMapFragment()
         atachBtnLocationListener()
         attchAddressListener()
+
+        if (!locationPermissionGranted) { //if locattion not granted, requesit and return
+
+            getLocationPermission()
+        }
     }
 
     private fun initUI() {
@@ -94,14 +103,15 @@ class MapMarkerActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap?) {
         map = (googleMap ?: return)
         mapUtils = MapUtils(this.applicationContext, map)
-        mapUtils.initMapMarker(R.drawable.ic_pin)
+        getDeviceLocation()
+
+
         mapUtils.initMarkerCameraListener { location ->
             getLocation = location
             place.locationLat = location.latitude
             place.locationLng = location.longitude
             place.address = ""
             Log.d(TAG, "initMarkerCameraListener ${getLocation.latitude}")
-
 
 
 //            btnShowAddress.visibility = View.VISIBLE
@@ -155,5 +165,96 @@ class MapMarkerActivity : AppCompatActivity(), OnMapReadyCallback {
         finish()
     }
 
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION -> {
+                if (grantResults.isNotEmpty() &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED
+                ) {
+                    locationPermissionGranted = true
+                    getDeviceLocation()
+
+                } else {
+                    success()
+
+                }
+            }
+        }
+    }
+
+    // Construct a FusedLocationProviderClient.
+//    val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+
+    private fun getDeviceLocation() {
+        /*
+         * Get the best and most recent location of the device, which may be null in rare
+         * cases when a location is not available.
+         */
+        try {
+            if (locationPermissionGranted) {
+                val locationResult =
+                    LocationServices.getFusedLocationProviderClient(this).lastLocation
+                locationResult.addOnCompleteListener(this) { task ->
+                    if (task.isSuccessful) {
+                        // Set the map's camera position to the current location of the device.
+
+                        val lastKnownLocation = task.result
+                        mapUtils.initMapMarker(
+                            R.drawable.ic_pin,
+                            LatLng(lastKnownLocation.latitude, lastKnownLocation.longitude)
+                        )
+
+//                        if (lastKnownLocation != null) {
+//                            map.moveCamera(
+//                                CameraUpdateFactory.newLatLngZoom(
+//                                    LatLng(
+//                                        lastKnownLocation!!.latitude,
+//                                        lastKnownLocation!!.longitude
+//                                    ), DEFAULT_ZOOM.toFloat()
+//                                )
+//                            )
+//                        }
+                    } else {
+                        Log.d(TAG, "Current location is null. Using defaults.")
+                        Log.e(TAG, "Exception: %s", task.exception)
+                        mapUtils.initMapMarker(R.drawable.ic_pin)
+
+                        map.uiSettings?.isMyLocationButtonEnabled = false
+                    }
+                }
+            }
+        } catch (e: SecurityException) {
+            Log.e("Exception: %s", e.message, e)
+        }
+    }
+
+
+    private var locationPermissionGranted = false
+    private val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1021
+    private fun getLocationPermission() {
+        /*
+         * Request location permission, so that we can get the location of the
+         * device. The result of the permission request is handled by a callback,
+         * onRequestPermissionsResult.
+         */
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            )
+            == PackageManager.PERMISSION_GRANTED
+        ) {
+            locationPermissionGranted = true
+        } else {
+            ActivityCompat.requestPermissions(
+                this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION
+            )
+        }
+    }
 
 }

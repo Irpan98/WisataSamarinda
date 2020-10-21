@@ -4,8 +4,6 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
-import androidx.lifecycle.map
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -14,6 +12,7 @@ import id.itborneo.wisatasamarinda.data.local.entity.WiPlaceEntity
 import id.itborneo.wisatasamarinda.data.model.WiPlace
 import id.itborneo.wisatasamarinda.data.remote.firebase.ApiResponse
 import id.itborneo.wisatasamarinda.data.remote.firebase.WiFirebase
+import java.lang.Exception
 
 
 class RemoteDataSource(wiFirebase: WiFirebase) {
@@ -47,15 +46,18 @@ class RemoteDataSource(wiFirebase: WiFirebase) {
                 Log.d(TAG, "getWiPlaces:${snapshot.value.toString()} ")
 
                 val listPlaces = mutableListOf<WiPlace>()
+
                 snapshot.children.forEach { dataSnapshot ->
                     val wiPlace = dataSnapshot.getValue(WiPlace::class.java)
                     if (wiPlace != null) {
                         wiPlace.id = dataSnapshot.key ?: ""
+
                         listPlaces.add(wiPlace)
                     } else {
 //                        result.postValue(ApiResponse.Empty)
                     }
                 }
+
                 result.postValue(ApiResponse.Success(listPlaces))
 
             }
@@ -91,6 +93,7 @@ class RemoteDataSource(wiFirebase: WiFirebase) {
                     // Handle unsuccessful uploads
                     Log.d(TAG, "addImageToStorage, addOnFailureListener")
                 }.addOnSuccessListener {
+
                     response.postValue("1")
 
                     Log.d(TAG, "addImageToStorage, addOnSuccessListener")
@@ -127,12 +130,40 @@ class RemoteDataSource(wiFirebase: WiFirebase) {
         val dbPlaceChild = database.wiPlaceChild
         dbPlaceChild.child(wiPlace.id).setValue(wiPlace)
             .addOnSuccessListener {
-                response.value =1
+
+                val file: Uri = Uri.parse(wiPlace.imagePath)
+                val riversRef: StorageReference =
+                    storage.PlaceImage.child(wiPlace.id)
+
+                try {
+                    val uploadTask = riversRef.putFile(file)
+
+
+                    uploadTask.addOnSuccessListener {
+
+                        response.postValue(1)
+
+                        Log.d(TAG, "updateWiPlace, addOnSuccessListener")
+                        // ...
+                    }.addOnFailureListener{
+                        response.postValue(1)
+                        Log.d(TAG, "updateWiPlace, addOnFailureListener")
+                    }
+                }catch (e: Exception){
+                    Log.d(TAG,"updateWiPlace error $e")
+                }
+
+
+
+//                response.value = 1
 
             }.addOnFailureListener {
                 Log.d("FirebaseServicesOutlite", "addOnFailureListener ${it.message}")
                 response.postValue(0)
             }
+
+
+
 
         return response
     }
@@ -216,6 +247,33 @@ class RemoteDataSource(wiFirebase: WiFirebase) {
         return result
 
     }
+
+
+    fun getOneImage(id: String): LiveData<Uri> {
+        val result = MutableLiveData<Uri>()
+
+
+        storage.PlaceImage.child(id).downloadUrl.addOnSuccessListener { uri ->
+            result.postValue(uri)
+            Log.d(TAG, "getImageFromStorage$uri")
+        }
+        return result
+    }
+
+//    fun getImagePath(id: String): LiveData<String> {
+//        var result = MutableLiveData<String>()
+//
+//        storage.PlaceImage.child(id).downloadUrl.addOnSuccessListener { uri ->
+//            result.postValue(uri.toString())
+//            Log.d(TAG, "getImageFromStorage$uri")
+////                result.postValue(uri)
+//        }.addOnFailureListener {
+//            Log.d(TAG, " getImageFromStorage $it")
+//            // Handle any errors
+//        }
+//        return result
+//
+//    }
 
 
 //    private fun getImageFromStorage(id: String): LiveData<Uri> {

@@ -12,6 +12,7 @@ import androidx.navigation.Navigation
 import com.bumptech.glide.Glide
 import id.itborneo.wisatasamarinda.R
 import id.itborneo.wisatasamarinda.data.model.WiPlace
+import id.itborneo.wisatasamarinda.utils.BottomNavUtils
 import id.itborneo.wisatasamarinda.utils.EXTRA_PLACE
 import kotlinx.android.synthetic.main.fragment_detail.*
 
@@ -19,6 +20,7 @@ import kotlinx.android.synthetic.main.fragment_detail.*
 class DetailFragment : Fragment() {
     private val TAG = "DetailFragment"
     private lateinit var navController: NavController
+    private lateinit var wiPlace: WiPlace
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,14 +31,34 @@ class DetailFragment : Fragment() {
 
     }
 
-    private lateinit var wiPlace: WiPlace
+
+    private fun initBottomBar() {
+        BottomNavUtils.invisible(activity)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initNav(view)
         initData()
+        initIvPlaceListenerBtn()
         initView()
         initEditListener()
+        initBottomBar()
+
+    }
+
+    private fun initIvPlaceListenerBtn() {
+        ivPlace.setOnClickListener {
+            actionMoveToPhotoViewer()
+        }
+    }
+
+    private fun actionMoveToPhotoViewer() {
+
+        val bundle = bundleOf(
+            EXTRA_PLACE to wiPlace,
+        )
+        navController.navigate(R.id.action_detailFragment_to_photoVieweFragment, bundle)
 
     }
 
@@ -76,6 +98,9 @@ class DetailFragment : Fragment() {
 
         Glide.with(requireContext())
             .load(wiPlace.imagePath)
+            .fitCenter()
+            .placeholder(requireContext().getDrawable(R.drawable.loading_image))
+
             .into(ivPlace)
 
 

@@ -1,6 +1,8 @@
 package id.itborneo.wisatasamarinda.ui.wisata
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +17,7 @@ class WisataAdapter(
     var context: Context, val clickListener: (WiPlace) -> Unit
 ) : RecyclerView.Adapter<WisataAdapter.ViewHolder>() {
 
+    private val TAG = "WisataAdapter"
     private var wiPlaces = listOf<WiPlace>()
 
 
@@ -34,13 +37,16 @@ class WisataAdapter(
     override fun onBindViewHolder(p0: ViewHolder, p1: Int) = p0.bind(wiPlaces[p1])
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        @SuppressLint("UseCompatLoadingForDrawables")
         fun bind(wiPlace: WiPlace) {
 
             itemView.tvName.text = wiPlace.name
             itemView.tvAddress.text = wiPlace.address
 
+//            Log.d(TAG, "imagepath ${wiPlace.imagePath}")
             Glide.with(itemView.context)
                 .load(wiPlace.imagePath)
+                .centerCrop()
                 .placeholder(context.getDrawable(R.drawable.loading_image))
                 .into(itemView.ivPlace)
 

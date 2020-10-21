@@ -77,6 +77,12 @@ class WisataPlaceFragment : Fragment() {
         }
     }
 
+    override fun onResume() {
+
+        super.onResume()
+        viewModel.onResume()
+    }
+
     private fun actionToAdd() {
         val bundle = bundleOf(
             EXTRA_REQ to REQ_STATUS_ADD,
@@ -111,13 +117,19 @@ class WisataPlaceFragment : Fragment() {
             when (it) {
                 is Resource.Success -> {
                     //get data and internet is active
-                    Log.d(TAG, "getWisataPlaces : Success  size${it.data?.size}")
+                    Log.d(TAG, "getWisataPlaces : Success  ${it.data}")
                     listPlace = DataMappers.mapEntitasToModel(it.data!!)
-                    getAllImage()
+                    getAllImage2(DataMappers.mapEntitasToModel(it.data))
+
+//                    getAllImage()
                     updateUI(DataMappers.mapEntitasToModel(it.data))
                 }
                 is Resource.Loading -> {
                     if (it.data != null) {
+//                        getAllImage()
+                        listPlace = DataMappers.mapEntitasToModel(it.data!!)
+
+                        getAllImage2(DataMappers.mapEntitasToModel(it.data))
                         updateUI(DataMappers.mapEntitasToModel(it.data), false)
 
                         //getData and no internet
@@ -182,16 +194,41 @@ class WisataPlaceFragment : Fragment() {
 
 //            ViewsUtils.setDialogComfirm(requireContext(), {
 //                Log.d(TAG, "setupOnSwipe + delete ${it.adapterPosition}")
+
             //delete
-            val item = listPlace[it.adapterPosition]
-            viewModel.deletePlace(item).observe(viewLifecycleOwner) {
-                Toast.makeText(requireContext(), "Berhasil Menghapus Item", Toast.LENGTH_SHORT)
-                    .show()
-            }
+
+            DialogUtls(requireContext()).setDialogDeleteComfirm(requireContext(), {
+                Log.d(TAG, "setupOnSwipe + delete ${it.adapterPosition}")
+                //delete
+
+                val item = listPlace[it.adapterPosition]
+                viewModel.deletePlace(item).observe(viewLifecycleOwner) {
+                    Toast.makeText(requireContext(), "Berhasil Menghapus Item", Toast.LENGTH_SHORT)
+                        .show()
+                }
+
+            }, {
+                //adapter.notifyDataSetChanged()
+
+            })
 
 
         }
 
+    }
+
+    private fun getAllImage2(listPlace: List<WiPlace>) {
+        Log.d(TAG, "getAllImage2")
+        listPlace.forEach { getPlace ->
+//            Log.d(TAG,"getAllImage2 getPlace")
+
+            viewModel.getOneImage(getPlace.id).observe(viewLifecycleOwner) {
+//                Log.d(TAG,"getAllImage2 getPlace id $it")
+
+                getPlace.imagePath = it.toString()
+                updateUI(listPlace)
+            }
+        }
     }
 
 
@@ -200,8 +237,11 @@ class WisataPlaceFragment : Fragment() {
 
         viewModel.getImageUri(listPlace).observe(requireActivity()) { listUri ->
 
+            if (listUri.isNullOrEmpty()) return@observe
+
 
             for (i in listUri.indices) {
+                Log.d(TAG, "getAllImage index $i")
                 listPlace[i].imagePath = listUri[i].toString()
             }
 
@@ -223,7 +263,7 @@ class WisataPlaceFragment : Fragment() {
 
         mainHandler.post(object : Runnable {
             override fun run() {
-                Log.d(TAG, "internetCheckerAllTime is internet on ${isInternetOn.value}")
+//                Log.d(TAG, "internetCheckerAllTime is internet on ${isInternetOn.value}")
                 isInternetOn.value = isInternetAvailable()
 //                RecyclerViewUtils.swipeable = isInternetAvailable()
 

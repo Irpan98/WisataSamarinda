@@ -1,5 +1,6 @@
 package id.itborneo.wisatasamarinda.ui.addUpdate
 
+import android.Manifest
 import android.Manifest.permission.CAMERA
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.app.Activity
@@ -20,6 +21,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat.checkSelfPermission
+import androidx.core.content.ContextCompat.getDrawable
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -87,6 +89,10 @@ class AddUpdateFragment : Fragment() {
 
     private fun initAddLocationListener() {
         btnGetLocation.setOnClickListener {
+
+
+
+
             getEditDataFilled()
             if (!isInternetAvailable()) return@setOnClickListener
             actionToMapsMarkerActivity()
@@ -161,6 +167,8 @@ class AddUpdateFragment : Fragment() {
             if (isInputValid()) return@setOnClickListener
 
 
+            btnAddUpdate.isEnabled = false
+
             loading()
             wiPlace = WiPlace(
                 etName.text.toString(),
@@ -191,6 +199,8 @@ class AddUpdateFragment : Fragment() {
                 actionSuccess()
             }
         })
+
+
     }
 
     private fun isInputValid(): Boolean {
@@ -280,6 +290,7 @@ class AddUpdateFragment : Fragment() {
             }
 
 
+
         }
 
     }
@@ -291,6 +302,7 @@ class AddUpdateFragment : Fragment() {
             data?.data?.let {
                 imageUri = it
                 Log.d(TAG, "onActivityResult ${data.data}")
+                dialog.dismiss()
                 updateUI()
 
 //                viewModel.addImage(it.toString())
@@ -303,6 +315,7 @@ class AddUpdateFragment : Fragment() {
             val intentOutlite = data.getParcelableExtra<WiPlace>(EXTRA_PLACE) ?: return
             Log.d(TAG, "onActivityResult getMap $intentOutlite")
 
+
             wiPlace.locationLng = intentOutlite.locationLng
             wiPlace.locationLat = intentOutlite.locationLat
             wiPlace.address = intentOutlite.address
@@ -310,9 +323,11 @@ class AddUpdateFragment : Fragment() {
             updateUI()
         } else if (resultCode == Activity.RESULT_OK && requestCode == IMAGE_TAKE_CODE) {
             Log.d(TAG, "onActivityResult IMAGE_TAKE_CODE   ")
+            dialog.dismiss()
 
             val auxFile = File(mCurrentPhotoPath)
             imageUri = Uri.fromFile(auxFile)
+//            wiPlace.imagePath = imageUri.toString()
 
 
             val bitmap: Bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath)
@@ -346,9 +361,19 @@ class AddUpdateFragment : Fragment() {
 
                 Glide.with(requireContext())
                     .load(wiPlace.imagePath)
+                    .fitCenter()
+                    .placeholder(requireContext().getDrawable(R.drawable.loading_image))
                     .into(ivPlace)
             }
         }
+
+
+        if (reqStatus != "Add") {
+            btnAddUpdate.text = getString(R.string.edit)
+            btnAddUpdate.icon = getDrawable(requireContext(), R.drawable.ic_edit)
+        }
+
+
     }
 
     private fun isInternetAvailable(): Boolean {
@@ -462,6 +487,8 @@ class AddUpdateFragment : Fragment() {
 
     private fun getEditDataFilled() {
         wiPlace.name = etName.text.toString()
-        wiPlace.description = etName.text.toString()
+        wiPlace.description = etDescription.text.toString()
     }
+
+
 }

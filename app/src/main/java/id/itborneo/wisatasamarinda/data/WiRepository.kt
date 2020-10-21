@@ -69,26 +69,26 @@ class WiRepository(
         remoteDataSource.addWiPlace(wiPlace).map {
             val wPlaceNew = wiPlace
             wPlaceNew.id = it
-            roomAddWiPlace(wPlaceNew)
+//            roomAddWiPlace(wPlaceNew)
             Log.d(TAG, "AddWiPlace transform")
             it
         }
 
 
-    private fun roomAddWiPlace(wiPlace: WiPlace): MutableLiveData<Long> {
-        Log.d(TAG, "roomAddWiPlace $wiPlace")
-        var response = MutableLiveData<Long>()
-        appExecutors.diskIO().execute {
-            response = localDataSource.insertOnePlace(DataMapper.mapModelToEntity(wiPlace))
-        }
-        return response
-
-    }
+//    private fun roomAddWiPlace(wiPlace: WiPlace): MutableLiveData<Long> {
+//        Log.d(TAG, "roomAddWiPlace $wiPlace")
+//        var response = MutableLiveData<Long>()
+//        appExecutors.diskIO().execute {
+//            response = localDataSource.insertOnePlace(DataMapper.mapModelToEntity(wiPlace))
+//        }
+//        return response
+//
+//    }
 
     fun editWiPlace(wiPlace: WiPlace) =
 
         remoteDataSource.updateWiPlace(wiPlace).map {
-            roomEditPlace(wiPlace)
+//            roomEditPlace(wiPlace)
             it
         }
 
@@ -117,4 +117,8 @@ class WiRepository(
         localDataSource.removePlace(DataMapper.mapModelToEntity(wiPlace))
 
     }
+
+    fun getOneImage(id: String) =
+        remoteDataSource.getOneImage(id)
+
 }

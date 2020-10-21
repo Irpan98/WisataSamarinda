@@ -42,6 +42,9 @@
         <action
             android:id="@+id/action_detailFragment_to_addUpdateFragment"
             app:destination="@id/addUpdateFragment" />
+        <action
+            android:id="@+id/action_detailFragment_to_photoVieweFragment"
+            app:destination="@id/photoVieweFragment" />
     </fragment>
     <fragment
         android:id="@+id/mapMarkerFragment"
@@ -66,4 +69,9 @@
             android:id="@+id/action_loginFragment_to_wisataPlaceFragment"
             app:destination="@id/wisataPlaceFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/photoVieweFragment"
+        android:name="id.itborneo.wisatasamarinda.ui.photoViewer.PhotoVieweFragment"
+        android:label="fragment_photo_viewe"
+        tools:layout="@layout/fragment_photo_viewe" />
 </navigation>
