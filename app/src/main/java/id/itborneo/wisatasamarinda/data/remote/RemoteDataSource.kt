@@ -12,7 +12,6 @@ import id.itborneo.wisatasamarinda.data.local.entity.WiPlaceEntity
 import id.itborneo.wisatasamarinda.data.model.WiPlace
 import id.itborneo.wisatasamarinda.data.remote.firebase.ApiResponse
 import id.itborneo.wisatasamarinda.data.remote.firebase.WiFirebase
-import java.lang.Exception
 
 
 class RemoteDataSource(wiFirebase: WiFirebase) {
@@ -136,23 +135,29 @@ class RemoteDataSource(wiFirebase: WiFirebase) {
                     storage.PlaceImage.child(wiPlace.id)
 
                 try {
-                    val uploadTask = riversRef.putFile(file)
+                    
+//                    riversRef.delete().addOnSuccessListener { //delete old photo first
+
+                        val uploadTask = riversRef.putFile(file)
 
 
-                    uploadTask.addOnSuccessListener {
+                        uploadTask.addOnSuccessListener {
 
-                        response.postValue(1)
+                            response.postValue(1)
 
-                        Log.d(TAG, "updateWiPlace, addOnSuccessListener")
-                        // ...
-                    }.addOnFailureListener{
-                        response.postValue(1)
-                        Log.d(TAG, "updateWiPlace, addOnFailureListener")
-                    }
-                }catch (e: Exception){
-                    Log.d(TAG,"updateWiPlace error $e")
+                            Log.d(TAG, "updateWiPlace, addOnSuccessListener")
+                            // ...
+                        }.addOnFailureListener {
+                            response.postValue(1)
+                            Log.d(TAG, "updateWiPlace, addOnFailureListener")
+                        }
+
+//                    }
+
+
+                } catch (e: Exception) {
+                    Log.d(TAG, "updateWiPlace error $e")
                 }
-
 
 
 //                response.value = 1

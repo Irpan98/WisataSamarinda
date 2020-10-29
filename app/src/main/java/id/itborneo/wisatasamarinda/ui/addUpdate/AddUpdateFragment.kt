@@ -327,7 +327,7 @@ class AddUpdateFragment : Fragment() {
 
             val auxFile = File(mCurrentPhotoPath)
             imageUri = Uri.fromFile(auxFile)
-//            wiPlace.imagePath = imageUri.toString()
+            wiPlace.imagePath = imageUri.toString()
 
 
             val bitmap: Bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath)

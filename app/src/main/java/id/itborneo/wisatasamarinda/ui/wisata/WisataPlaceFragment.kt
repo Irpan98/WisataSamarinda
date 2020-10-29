@@ -208,7 +208,7 @@ class WisataPlaceFragment : Fragment() {
                 }
 
             }, {
-                //adapter.notifyDataSetChanged()
+                adapter.notifyDataSetChanged()
 
             })
 
